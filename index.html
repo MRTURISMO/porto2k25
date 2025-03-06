@@ -3,102 +3,96 @@
 <head>  
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <title>Reserva de Assentos</title>  
+    <title>Página com Mapa de Poltronas</title>  
     <style>  
-        body {  
-            font-family: Arial, sans-serif;  
-            margin: 20px;  
-            padding: 20px;  
-            border: 1px solid #ccc;  
-            border-radius: 5px;  
-        }  
-
-        h1 {  
-            color: #333;  
-        }  
-
-        form {  
-            margin-bottom: 20px;  
-        }  
-
-        input,  
-        select {  
-            display: block;  
-            margin: 10px 0;  
-            padding: 8px;  
-            width: 100%;  
-            border: 1px solid #ccc;  
-            border-radius: 3px;  
-        }  
-
-        button {  
-            background-color: #28a745;  
-            color: white;  
-            border: none;  
-            padding: 10px;  
-            border-radius: 5px;  
-            cursor: pointer;  
-        }  
-
-        button:hover {  
-            background-color: #218838;  
-        }  
-
-        #error-message {  
-            color: red;  
-            margin-bottom: 10px;  
-        }  
-
-        #message-container {  
-            display: none;  
-            margin-top: 10px;  
-            padding: 10px;  
-            background-color: #d4edda;  
-            color: #155724;  
-            border: 1px solid #c3e6cb;  
-            border-radius: 5px;  
-        }  
-
-        #mapa-ônibus {  
-            margin-bottom: 20px; /* Adiciona espaço abaixo da imagem */  
-            max-width: 100%; /* Para que a imagem se ajuste ao contêiner */  
+        img {  
+            width: 100%; /* Ajuda a imagem a se adequar à tela */  
+            max-width: 800px; /* Limita a largura máxima da imagem */  
             height: auto; /* Mantém a proporção da imagem */  
         }  
     </style>  
 </head>  
 <body>  
-    <h1>Reservar Assento</h1>  
+    <h1>Mapa das Poltronas</h1>  
+    <img src="https://i.ibb.co/8L8k0NVC/MAPA-POLTRONAS-PORTO25.png" alt="Mapa de Poltronas" />  
+    <p>Selecione seu assento com base no mapa mostrado acima.</p>  
+</body>  
+</html>  
 
-    <!-- Aqui está a tag <img> com o link da imagem do mapa do ônibus -->  
-    <img src="https://i.ibb.co/8L8k0NVC/MAPA-POLTRONAS-PORTO25.png" alt="Mapa do Ônibus" id="mapa-ônibus">  
-
+<!DOCTYPE html>  
+<html lang="pt-BR">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Reservas de Assentos</title>  
+    <style>  
+        body { font-family: Arial, sans-serif; }  
+        #message { color: green; }  
+        #error-message { color: red; }  
+        #message-container { display: none; }  
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }  
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }  
+    </style>  
+</head>  
+<body>  
+    <h1>Reserva de Assentos</h1>  
     <form id="reserva-form">  
-        <input type="text" id="nome" placeholder="Seu Nome" required>  
-        <input type="text" id="cpf" placeholder="Seu CPF" required> <!-- Campo CPF adicionado -->  
-
+        <label for="nome">Nome:</label>  
+        <input type="text" id="nome" required><br><br>  
+        
+        <label for="cpf">CPF:</label>  
+        <input type="text" id="cpf" required><br><br>  
+        
+        <label for="escola">Escola:</label>  
         <select id="escola" required>  
-            <option value="">Selecione a Escola</option>  
-            <option value="CED 03 - GUARÁ">CED 03 - GUARÁ</option>  
+            <option value="">Selecione uma escola</option>  
             <option value="CEMI - GAMA">CEMI - GAMA</option>  
-            <option value="CEMEIT">CEMEIT</option>  
-            <option value="GG - GUARÁ">GG - GUARÁ</option>  
-            <option value="CEM URSO BRANCO">CEM URSO BRANCO</option>  
-        </select>  
-
-        <input type="email" id="email" placeholder="Seu Email" required>  
-
+            <option value="CG - GAMA">CG - GAMA</option>  
+            <option value="CEM 02 - GAMA">CEM 02 - GAMA</option>  
+            <option value="CEM 404 - SANTA MARIA">CEM 404 - SANTA MARIA</option>  
+            <option value="CEM 01 (GG) - GUARÁ">CEM 01 (GG) - GUARÁ</option>  
+            <option value="CED 03 - GUARÁ">CED 03 - GUARÁ</option>  
+            <option value="CED 04 - GUARÁ">CED 04 - GUARÁ</option>  
+            <option value="CEM 05 - GUARÁ">CEM 05 - GUARÁ</option>  
+            <option value="CEMI - TAGUATINGA">CEMI - TAGUATINGA</option>  
+            <option value="CEM 02 - CEILÂNDIA">CEM 02 - CEILÂNDIA</option>  
+            <option value="COLÉGIO RESOLVE - CEILÂNDIA">COLÉGIO RESOLVE - CEILÂNDIA</option>  
+            <option value="COLÉGIO SANTA DOROTEIA - ASA NORTE">COLÉGIO SANTA DOROTEIA - ASA NORTE</option>  
+        </select><br><br>  
+        
+        <label for="email">Email:</label>  
+        <input type="email" id="email" required><br><br>  
+        
+        <label for="assento">Selecione um Assento:</label>  
         <select id="assento" required>  
             <option value="">Selecione um Assento</option>  
-            <!-- As opções de assentos serão geradas aqui -->  
-        </select>  
-
-        <button type="submit" id="btnReservar">Reservar</button>  
+        </select><br><br>  
+        
+        <button type="submit">Reservar</button>  
     </form>  
+    
     <div id="error-message"></div>  
     <div id="message-container">  
         <p id="message"></p>  
     </div>  
-  
+
+    <!-- Painel de Controle -->  
+    <div id="painel-controle">  
+        <h2>Controle de Reservas</h2>  
+        <table id="tabela-reservas">  
+            <thead>  
+                <tr>  
+                    <th>Nome</th>  
+                    <th>Escola</th>  
+                    <th>Número do Assento</th>  
+                </tr>  
+            </thead>  
+            <tbody>  
+                <!-- As reservas serão adicionadas aqui -->  
+            </tbody>  
+        </table>  
+    </div>  
+
     <script src="app.js"></script>  
 </body>  
 </html>  
