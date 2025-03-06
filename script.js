@@ -19,10 +19,32 @@ function carregarAssentos() {
     }
 }
 
+// Função para enviar e-mail de confirmação
+function enviarEmail(nome, email, assento) {
+    const templateParams = {
+        nome: nome,
+        email: email,
+        assento: assento
+    };
+
+    emailjs.send('SEU_SERVICE_ID', 'SEU_TEMPLATE_ID', templateParams)
+        .then((response) => {
+            console.log('E-mail enviado com sucesso:', response.status, response.text);
+            alert('Um e-mail com as informações da sua reserva foi enviado!');
+        }, (error) => {
+            console.error('Erro ao enviar o e-mail:', error);
+            alert('Houve um erro ao enviar o e-mail. Tente novamente mais tarde.');
+        });
+}
+
 // Função para reservar o assento
 function reservarAssento() {
+    const nome = document.getElementById('nome').value;
+    const cpf = document.getElementById('cpf').value;
+    const escola = document.getElementById('escola').value;
     const assentoSelecionado = document.getElementById('assento').value;
-    
+    const email = document.getElementById('email').value;
+
     // Verificar se o assento já foi reservado
     if (assentosReservados.includes(parseInt(assentoSelecionado))) {
         alert("Este assento já foi reservado. Por favor, escolha outro.");
@@ -38,7 +60,8 @@ function reservarAssento() {
     // Exibir a mensagem de confirmação
     document.getElementById('mensagem').textContent = `Assento ${assentoSelecionado} reservado com sucesso!`;
 
-    // Aqui você pode adicionar a lógica para enviar e-mail ou atualizar a planilha
+    // Enviar o e-mail de confirmação
+    enviarEmail(nome, email, assentoSelecionado);
 }
 
 // Carregar os assentos ao carregar a página
