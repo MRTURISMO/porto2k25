@@ -5,13 +5,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reserva de Assentos</title>
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.5.0/dist/email.min.js"></script>
-    <script src="https://apis.google.com/js/api.js"></script>
+    <style>
+        /* Estilo da imagem do mapa */
+        #mapa {
+            width: 100%;
+            height: 400px;
+            background-image: url('https://i.ibb.co/8L8k0NVC/MAPA-POLTRONAS-PORTO25.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Estilos para os assentos */
+        .assento {
+            width: 40px;
+            height: 40px;
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+            line-height: 40px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .assento-disponivel {
+            background-color: green;
+            color: white;
+        }
+
+        .assento-reservado {
+            background-color: red;
+            color: white;
+        }
+
+        .assento-selecionado {
+            background-color: blue;
+            color: white;
+        }
+
+        /* Formulário de reserva */
+        .form-container {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-container input,
+        .form-container select,
+        .form-container button {
+            margin-bottom: 10px;
+        }
+
+        .form-container label {
+            margin-bottom: 5px;
+        }
+
+        #error-message {
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <h1>Reserva de Assentos</h1>
 
-    <!-- Formulário para preenchimento -->
-    <form id="formReserva">
+    <!-- Exibição da imagem do mapa -->
+    <div id="mapa"></div>
+
+    <h2>Escolha seu Assento</h2>
+    <div>
+        <h3>Parte Superior (Assentos 01 a 52)</h3>
+        <div id="parte-superior" class="assentos"></div>
+        <h3>Parte Inferior (Assentos 53 a 64)</h3>
+        <div id="parte-inferior" class="assentos"></div>
+    </div>
+
+    <!-- Formulário de Reserva -->
+    <div class="form-container">
+        <h3>Preencha os Dados da Reserva</h3>
         <label for="nome">Nome:</label>
         <input type="text" id="nome" required><br>
 
@@ -28,14 +98,15 @@
         </select><br>
 
         <label for="assento">Assento:</label>
-        <input type="text" id="assento" required><br>
+        <input type="text" id="assento" readonly required><br>
 
         <label for="email">E-mail:</label>
         <input type="email" id="email" required><br>
 
-        <button type="button" id="btnReservar">Reservar</button>
-    </form>
+        <button type="button" id="btnReservar">Reservar Assento</button>
+        <div id="error-message"></div>
+    </div>
 
-    <div id="error-message"></div>
+    <script src="app.js"></script> <!-- Link para o JavaScript -->
 </body>
 </html>
