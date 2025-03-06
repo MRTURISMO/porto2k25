@@ -13,44 +13,17 @@ const reservas = {};  // Objeto para armazenar as reservas
 // Inicializa EmailJS
 emailjs.init(EMAILJS_USER_ID);
 
-// Função para carregar os assentos
+// Função para carregar os assentos disponíveis no menu suspenso
 function carregarAssentos() {
-    const parteSuperior = document.getElementById('parte-superior');
-    const parteInferior = document.getElementById('parte-inferior');
-
-    // Criar assentos para a parte superior (01 a 52)
-    for (let i = 1; i <= 52; i++) {
-        const assento = document.createElement('div');
-        assento.classList.add('assento', 'assento-disponivel');
-        assento.innerText = i;
-        assento.id = `assento${i}`;
-        assento.addEventListener('click', () => selecionarAssento(i));
-        parteSuperior.appendChild(assento);
+    const assentoSelect = document.getElementById('assento');
+    
+    // Adiciona os assentos ao menu suspenso
+    for (let i = 1; i <= 64; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `Assento ${i}`;
+        assentoSelect.appendChild(option);
     }
-
-    // Criar assentos para a parte inferior (53 a 64)
-    for (let i = 53; i <= 64; i++) {
-        const assento = document.createElement('div');
-        assento.classList.add('assento', 'assento-disponivel');
-        assento.innerText = i;
-        assento.id = `assento${i}`;
-        assento.addEventListener('click', () => selecionarAssento(i));
-        parteInferior.appendChild(assento);
-    }
-}
-
-// Função para selecionar o assento
-function selecionarAssento(assentoId) {
-    const assento = document.getElementById(`assento${assentoId}`);
-    if (assento.classList.contains('assento-reservado')) {
-        alert('Este assento já está reservado.');
-        return;
-    }
-
-    // Marcar o assento como selecionado
-    assento.classList.add('assento-selecionado');
-    assento.classList.remove('assento-disponivel');
-    document.getElementById('assento').value = assentoId; // Preenche o campo com o número do assento
 }
 
 // Função para enviar e-mail
@@ -64,7 +37,6 @@ function enviarEmail(nome, email, assento) {
     emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
         .then((response) => {
             console.log('E-mail enviado com sucesso:', response.status, response.text);
-            alert('Um e-mail com as informações da sua reserva foi enviado!');
         }, (error) => {
             console.error('Erro ao enviar o e-mail:', error);
             alert('Houve um erro ao enviar o e-mail. Tente novamente mais tarde.');
@@ -88,6 +60,21 @@ async function adicionarReservaNaPlanilha(nome, cpf, escola, assento, email) {
     }
 }
 
+// Função para atualizar o painel de controle (na página)
+function atualizarPainel(nome, cpf, escola, assento) {
+    const tableBody = document.querySelector('#panel-table tbody');
+    const row = document.createElement('tr');
+
+    row.innerHTML = `
+        <td>${nome}</td>
+        <td>${cpf}</td>
+        <td>${escola}</td>
+        <td>${assento}</td>
+        <td>${new Date().toLocaleString()}</td>
+    `;
+    tableBody.appendChild(row);
+}
+
 // Função para processar a reserva
 function processarReserva() {
     const nome = document.getElementById('nome').value;
@@ -108,27 +95,29 @@ function processarReserva() {
         return;
     }
 
-    // Marcar o assento como reservado
-    const assentoElement = document.getElementById(`assento${assento}`);
-    assentoElement.classList.add('assento-reservado');
-    assentoElement.classList.remove('assento-selecionado');
+    if (assentosReservados.has(assento)) {
+        errorMessageElement.textContent = 'Este assento já está reservado. Escolha outro.';
+        return;
+    }
 
-    // Registrar a reserva
     reservas[cpf] = { nome, escola, assento };
     assentosReservados.add(assento);
 
-    alert(`Reserva feita com sucesso!\nNome: ${nome}\nEscola: ${escola}\nAssento: ${assento}`);
+    // Exibir mensagem de sucesso
+    const messageContainer = document.getElementById('message-container');
+    document.getElementById('message').textContent = `Seu assento é o de número ${assento}`;
+    messageContainer.style.display = 'block';
 
-    // Adicionar reserva à planilha
+    // Adicionar à planilha e painel administrativo
     adicionarReservaNaPlanilha(nome, cpf, escola, assento, email);
+    atualizarPainel(nome, cpf, escola, assento);
 
-    // Enviar e-mail
+    // Enviar o e-mail de confirmação
     enviarEmail(nome, email, assento);
 }
 
-// Função de inicialização
+// Carregar os assentos e configurar o botão de reserva
 document.addEventListener('DOMContentLoaded', () => {
-    gapiLoad();
     carregarAssentos();
     document.getElementById('btnReservar').addEventListener('click', processarReserva);
 });
