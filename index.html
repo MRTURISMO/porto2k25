@@ -39,6 +39,9 @@
     <label>Assento:</label>  
     <input type="number" id="assento" min="1" max="64" required>  
     
+    <label>E-mail:</label>  
+    <input type="email" id="email" required>  
+    
     <button onclick="reservarAssento()">Reservar</button>  
     
     <div id="assentos-container">  
@@ -47,5 +50,6 @@
     </div>  
     
     <script src="script.js" defer></script>  
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser/dist/email.min.js"></script>  
 </body>  
 </html>  

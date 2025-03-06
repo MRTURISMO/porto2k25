@@ -1,64 +1,98 @@
-// Atomic variables to track reserved seats and registered CPF  
-const reservas = {};  
-const assentosReservados = new Set();  
-const totalAssentos = 64; // Total number of seats  
+// Substitua pelos seus dados  
+const SHEET_ID = 'SUA_ID_DA_PLANILHA'; // ID da sua planilha  
+const CLIENT_ID = 'SUA_CLIENT_ID'; // ID do cliente OAuth  
+const API_KEY = 'nRf0FZ02F4h9czGd6'; // Sua Chave da API  
+const EMAILJS_USER_ID = 'SUA_EMAILJS_USER_ID'; // User ID do EmailJS  
+const TEMPLATE_ID = 'SEU_TEMPLATE_ID'; // Template ID do EmailJS  
+const SERVICE_ID = 'SEU_SERVICE_ID'; // Service ID do EmailJS  
 
-function atualizarAssentos() {  
-    const assentosContainer = document.getElementById('assentos');  
-    assentosContainer.innerHTML = ''; // Limpa a lista de assentos  
+// Inicializar o EmailJS  
+(function() {  
+    emailjs.init(EMAILJS_USER_ID); // Inicializa o EmailJS com seu User ID  
+})();  
 
-    for (let i = 1; i <= totalAssentos; i++) {  
-        const assentoDiv = document.createElement('div');  
-        assentoDiv.classList.add('assento');  
-        
-        assentoDiv.textContent = i; // Exibe o número do assento  
+// Função para enviar um e-mail  
+function enviarEmail(nome, email, assento) {  
+    const templateParams = {  
+        nome: nome,  
+        email: email,  
+        assento: assento  
+    };  
 
-        if (assentosReservados.has(i.toString())) {  
-            assentoDiv.classList.add('reservado'); // Se o assento estiver reservado  
-        } else {  
-            assentoDiv.classList.add('disponivel'); // Se o assento estiver disponível  
-        }  
-        
-        assentosContainer.appendChild(assentoDiv); // Adiciona o assento ao container  
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)  
+        .then((response) => {  
+            console.log('E-mail enviado com sucesso:', response.status, response.text);  
+            alert('Um e-mail com as informações da sua reserva foi enviado!');  
+        }, (error) => {  
+            console.error('Erro ao enviar o e-mail:', error);  
+            alert('Houve um erro ao enviar o e-mail. Tente novamente mais tarde.');  
+        });  
+}  
+
+// Função para adicionar uma reserva à planilha  
+async function adicionarReservaNaPlanilha(nome, cpf, escola, assento) {  
+    try {  
+        const response = await gapi.client.sheets.spreadsheets.values.append({  
+            spreadsheetId: SHEET_ID,  
+            range: 'Sheet1!A:D',  
+            valueInputOption: 'RAW',  
+            resource: {  
+                values: [[nome, cpf, escola, assento]]  
+            }  
+        });  
+        console.log("Reserva adicionada à planilha:", response);  
+    } catch (error) {  
+        console.error("Erro ao adicionar reserva à planilha:", error);  
     }  
 }  
 
+// Atualizar a função reservarAssento para incluir o envio de e-mail  
 function reservarAssento() {  
     const nome = document.getElementById('nome').value;  
     const cpf = document.getElementById('cpf').value;  
     const escola = document.getElementById('escola').value;  
     const assento = document.getElementById('assento').value;  
+    const email = document.getElementById('email').value;  
 
     const errorMessageElement = document.getElementById('error-message');  
-    errorMessageElement.textContent = ''; // Clear previous errors  
+    errorMessageElement.textContent = ''; // Limpar mensagens de erro anteriores  
 
-    // Validate inputs  
-    if (!nome || !cpf || !escola || !assento) {  
+    // Validação dos inputs  
+    if (!nome || !cpf || !escola || !assento || !email) {  
         errorMessageElement.textContent = 'Por favor, preencha todos os campos.';  
         return;  
     }  
 
-    // Check if CPF is already used  
+    // Verificar se o CPF já foi utilizado  
     if (reservas[cpf]) {  
         errorMessageElement.textContent = 'Este CPF já foi utilizado para uma reserva.';  
         return;  
     }  
 
-    // Check if the seat is already reserved  
+    // Verificar se o assento já está reservado  
     if (assentosReservados.has(assento)) {  
         errorMessageElement.textContent = 'Este assento já está reservado. Por favor, escolha outro assento.';  
         return;  
     }  
 
-    // Reserve the seat  
-    reservas[cpf] = { nome, escola, assento }; // Store reservation details  
-    assentosReservados.add(assento); // Mark seat as reserved  
-    
+    // Reservar o assento  
+    reservas[cpf] = { nome, escola, assento }; // Armazenar os detalhes da reserva  
+    assentosReservados.add(assento); // Marcar o assento como reservado  
+
     alert(`Reserva feita com sucesso!\nNome: ${nome}\nEscola: ${escola}\nAssento: ${assento}`);  
 
     // Atualizar a lista de assentos disponíveis  
     atualizarAssentos();  
+
+    // Adicionar reserva à planilha do Google  
+    adicionarReservaNaPlanilha(nome, cpf, escola, assento);  
+
+    // Enviar e-mail ao passageiro  
+    enviarEmail(nome, email, assento);  
 }  
 
-// Inicializa os assentos ao carregar a página  
-document.addEventListener('DOMContentLoaded', atualizarAssentos);  
+// Carregar o gapi quando a página for carregada  
+document.addEventListener('DOMContentLoaded', () => {  
+    gapiLoad();  
+    atualizarAssentos();  
+});  
