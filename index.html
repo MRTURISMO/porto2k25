@@ -6,13 +6,20 @@
     <title>Reserva de Assentos</title>  
     <style>  
         body { font-family: Arial, sans-serif; text-align: center; }  
-        img { width: 80%; max-width: 600px; margin-top: 20px; margin-bottom: 20px; } /* Espaço adicional abaixo da imagem */  
+        img { width: 80%; max-width: 600px; margin-top: 20px; margin-bottom: 20px; }  
         select, input, button { display: block; margin: 10px auto; padding: 10px; }  
+        .error { color: red; }  
+        #assentos-container { margin-top: 20px; }  
+        .assento { display: inline-block; width: 40px; height: 40px; margin: 5px; text-align: center; line-height: 40px; font-weight: bold; }  
+        .reservado { background-color: red; color: white; }  
+        .disponivel { background-color: green; color: white; }  
     </style>  
 </head>  
 <body>  
     <h1>Escolha seu Assento</h1>  
     <img id="bus-map" src="https://i.ibb.co/8L8k0NVC/MAPA-POLTRONAS-PORTO25.png" alt="Mapa do Ônibus">  
+    
+    <div id="error-message" class="error"></div>  
     
     <label>Nome Completo:</label>  
     <input type="text" id="nome" required>  
@@ -33,6 +40,11 @@
     <input type="number" id="assento" min="1" max="64" required>  
     
     <button onclick="reservarAssento()">Reservar</button>  
+    
+    <div id="assentos-container">  
+        <h2>Assentos Disponíveis</h2>  
+        <div id="assentos"></div>  
+    </div>  
     
     <script src="script.js" defer></script>  
 </body>  
